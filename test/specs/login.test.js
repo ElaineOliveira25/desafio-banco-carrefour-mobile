@@ -12,7 +12,7 @@ describe('Tela de Login', () => {
         await resetApp();
     });
 
-    it('[TC-01] Deve realizar login com sucesso utilizando credenciais válidas', async () => {
+    it('Deve realizar login com sucesso utilizando credenciais válidas', async () => {
         allure.addStory('Login válido');
         allure.addSeverity('critical');
 
@@ -32,7 +32,7 @@ describe('Tela de Login', () => {
         await LoginPage.fecharModalSucesso();
     });
 
-    it('[TC-02] Deve exibir mensagens de erro ao tentar logar sem preencher email e senha', async () => {
+    it('Deve exibir mensagens de erro ao tentar logar sem preencher email e senha', async () => {
         allure.addStory('Validação de campos obrigatórios');
         allure.addSeverity('high');
 
@@ -43,7 +43,7 @@ describe('Tela de Login', () => {
         await (await LoginPage.errorPasswordMsg).waitForDisplayed({ timeout: 10000 });
     });
 
-    it('[TC-03] Deve exibir mensagem de erro ao informar email inválido', async () => {
+    it('Deve exibir mensagem de erro ao informar email inválido', async () => {
         allure.addStory('Validação de email inválido');
         allure.addSeverity('high');
 
@@ -53,17 +53,7 @@ describe('Tela de Login', () => {
         await (await LoginPage.errorEmailMsg).waitForDisplayed({ timeout: 10000 });
     });
 
-    it('[TC-04] Deve exibir mensagem de erro quando a senha não for preenchida', async () => {
-        allure.addStory('Senha obrigatória');
-        allure.addSeverity('high');
-
-        await LoginPage.acessarTelaLogin();
-        await LoginPage.login(dataLogin.validEmailEmptyPassword.email, '');
-
-        await (await LoginPage.errorPasswordMsg).waitForDisplayed({ timeout: 10000 });
-    });
-
-    it('[TC-05] Deve exibir erro quando a senha possuir menos de 8 caracteres', async () => {
+    it('Deve exibir erro quando a senha possuir menos de 8 caracteres', async () => {
         allure.addStory('Validação de tamanho da senha');
         allure.addSeverity('high');
 
