@@ -1,0 +1,23 @@
+node_modules/
+allure-results/
+allure-report/
+errorShots/
+screenshots/
+
+# App binaries — add locally
+app/*.apk
+app/*.ipa
+app/*.app
+
+# Environment
+.env
+*.env.local
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+wdio-*.log

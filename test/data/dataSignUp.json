@@ -1,0 +1,42 @@
+{
+  "validSignUpUser": {
+    "email": "teste@teste.com",
+    "password": "12345678",
+    "confirmPassword": "12345678"
+  },
+  "invalidEmailSignUpUser": {
+    "email": "teste.com",
+    "password": "12345678",
+    "confirmPassword": "12345678"
+  },
+  "shortPasswordSignUpUser": {
+    "email": "teste@teste.com",
+    "password": "1234567",
+    "confirmPassword": "1234567"
+  },
+  "shortConfirmPasswordUser": {
+    "email": "teste@teste.com",
+    "password": "12345678",
+    "confirmPassword": "1234567"
+  },
+  "emptyPasswordSignUpUser": {
+    "email": "teste@teste.com",
+    "password": "",
+    "confirmPassword": "12345678"
+  },
+  "emptyConfirmPasswordSignUpUser": {
+    "email": "teste@teste.com",
+    "password": "12345678",
+    "confirmPassword": ""
+  },
+  "emptyEmailSignUpUser": {
+    "email": "",
+    "password": "12345678",
+    "confirmPassword": "12345678"
+  },
+  "mismatchedPasswordSignUpUser": {
+    "email": "teste@teste.com",
+    "password": "12345678",
+    "confirmPassword": "87654321"
+  }
+}

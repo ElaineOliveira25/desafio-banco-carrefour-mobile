@@ -1,0 +1,58 @@
+name: Android Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  android:
+    name: Run Android tests on BrowserStack
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Upload APK to BrowserStack
+        id: upload
+        run: |
+          RESPONSE=$(curl -s -u "$BROWSERSTACK_USER:$BROWSERSTACK_KEY" \
+            -X POST "https://api-cloud.browserstack.com/app-automate/upload" \
+            -F "file=@app/android.wdio.native.app.v2.0.0.apk")
+          APP_URL=$(echo "$RESPONSE" | node -e "process.stdin.resume();let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>console.log(JSON.parse(d).app_url))")
+          echo "app_url=$APP_URL" >> "$GITHUB_OUTPUT"
+        env:
+          BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
+          BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_KEY }}
+
+      - name: Run tests on BrowserStack (Android)
+        run: npm run test:browserstack
+        env:
+          BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
+          BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_KEY }}
+          BROWSERSTACK_ANDROID_APP: ${{ steps.upload.outputs.app_url }}
+          BUILD_NAME: "CI #${{ github.run_number }} — ${{ github.ref_name }}"
+
+      - name: Generate Allure report
+        if: always()
+        run: npx allure generate allure-results -o allure-report --clean
+
+      - name: Upload Allure report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report/
+          retention-days: 7
