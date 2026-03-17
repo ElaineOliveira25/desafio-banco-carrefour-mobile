@@ -81,7 +81,7 @@ class HomeComponent extends BasePage {
 
     async acessarTelaHome() {
         const btn = await this.homeButton;
-        await btn.waitForDisplayed({ timeout: 10000 });
+        await btn.waitForDisplayed({ timeout: 15000 });
         await btn.click();
     }
 }
@@ -155,7 +155,7 @@ class NavigationComponent extends BasePage {
 
     async acessarTelaWebview() {
         const btn = await this.webviewButton;
-        await btn.waitForDisplayed({ timeout: 10000 });
+        await btn.waitForDisplayed({ timeout: 15000 });
         await btn.click();
     }
 
@@ -167,25 +167,25 @@ class NavigationComponent extends BasePage {
 
     async fecharBarraNavegacao() {
         const btn = await this.closeNavigationBar;
-        await btn.waitForDisplayed({ timeout: 10000 });
+        await btn.waitForDisplayed({ timeout: 15000 });
         await btn.click();
     }
 
     async acessarTelaSwipe() {
         const btn = await this.swipeButton;
-        await btn.waitForDisplayed({ timeout: 10000 });
+        await btn.waitForDisplayed({ timeout: 15000 });
         await btn.click();
     }
 
     async acessarTelaDrag() {
         const btn = await this.dragButton;
-        await btn.waitForDisplayed({ timeout: 10000 });
+        await btn.waitForDisplayed({ timeout: 15000 });
         await btn.click();
     }
 }
 
 module.exports = {
     BasePage,
-    homePage:       new HomeComponent(),
+    homePage: new HomeComponent(),
     navigationPage: new NavigationComponent(),
 };

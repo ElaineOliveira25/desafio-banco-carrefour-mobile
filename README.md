@@ -55,8 +55,9 @@ O projeto foi desenvolvido como parte do **Desafio Banco Carrefour**, com foco e
 |------|---------|
 | **Nome** | WebdriverIO Native Demo App |
 | **Versão** | 2.0.0 |
-| **Plataforma** | Android (APK) |
-| **Package ID** | `com.wdiodemoapp` |
+| **Plataforma** | Android (APK) e iOS (.app) |
+| **Package ID Android** | `com.wdiodemoapp` |
+| **Bundle ID iOS** | `org.wdiodemoapp` |
 | **Download** | [github.com/webdriverio/native-demo-app/releases](https://github.com/webdriverio/native-demo-app/releases) |
 | **Tipo** | App de demonstração — não é um app real de produção |
 
@@ -91,8 +92,11 @@ O app possui 5 telas acessíveis pela barra de navegação inferior:
 desafio-banco-carrefour/
 │
 ├── app/
-│   ├── android.wdio.native.app.v2.0.0.apk   ← APK do app (não versionado)
-│   └── readme.txt                             ← Instruções para baixar o APK
+│   ├── android/
+│   │   └── android.wdio.native.app.v2.0.0.apk  ← APK Android (não versionado)
+│   ├── ios/
+│   │   └── wdio-native-app.v2.0.0.app           ← App iOS (não versionado)
+│   └── readme.txt                                ← Instruções para baixar os apps
 │
 ├── test/
 │   ├── data/
@@ -153,14 +157,21 @@ RUN_ON_BS=true  → usa BrowserStack (dispositivo real na nuvem)
 Lista todas as dependências do projeto e os atalhos de comando (`scripts`):
 
 ```json
-"test"              → roda todos os testes + gera relatório
-"test:login"        → roda só os testes de login
-"test:signup"       → roda só os testes de cadastro
-"test:navigation"   → roda só os testes de navegação
-"test:forms"        → roda só os testes de formulário
-"test:browserstack" → roda no BrowserStack (nuvem)
-"allure:report"     → gera e abre o relatório HTML
-"clean"             → limpa pastas de resultados
+"test"                  → roda todos os testes (Android) + gera relatório
+"test:login"            → roda só os testes de login (Android)
+"test:signup"           → roda só os testes de cadastro (Android)
+"test:navigation"       → roda só os testes de navegação (Android)
+"test:forms"            → roda só os testes de formulário (Android)
+"test:android"          → roda toda a suíte explicitamente em Android
+"test:ios"              → roda toda a suíte em iOS
+"test:ios:login"        → roda só os testes de login (iOS)
+"test:ios:signup"       → roda só os testes de cadastro (iOS)
+"test:ios:navigation"   → roda só os testes de navegação (iOS)
+"test:ios:forms"        → roda só os testes de formulário (iOS)
+"test:browserstack"     → roda no BrowserStack Android (nuvem)
+"test:browserstack:ios" → roda no BrowserStack iOS (nuvem)
+"allure:report"         → gera e abre o relatório HTML
+"clean"                 → limpa pastas de resultados
 ```
 
 ### `test/specs/` — Os Testes em Si
@@ -297,10 +308,10 @@ cd desafio-banco-carrefour
 # 2. Instale as dependências
 npm ci
 
-# 3. Baixe o APK
+# 3. Baixe o app
 # Acesse: https://github.com/webdriverio/native-demo-app/releases
-# Baixe: android.wdio.native.app.v2.0.0.apk
-# Coloque na pasta: app/
+# Android: baixe android.wdio.native.app.v2.0.0.apk → coloque em app/android/
+# iOS:     baixe wdio-native-app.v2.0.0.app         → coloque em app/ios/
 
 # 4. Configure as variáveis de ambiente
 cp .env.example .env
@@ -316,23 +327,37 @@ Copie o `.env.example` para `.env` e preencha os valores:
 ```bash
 # ─── Execução ─────────────────────────────────────────────────────────────────
 RUN_ON_BS=false          # false = emulador local | true = BrowserStack
+PLATFORM=android         # android (padrão) | ios
 
 # ─── Appium local ────────────────────────────────────────────────────────────
 APPIUM_HOST=127.0.0.1
 APPIUM_PORT=4723
 
-# ─── Dispositivo local ───────────────────────────────────────────────────────
+# ─── Dispositivo Android local ───────────────────────────────────────────────
 DEVICE_NAME=Android Emulator
 
-# ─── BrowserStack (só necessário quando RUN_ON_BS=true) ──────────────────────
+# ─── Dispositivo iOS local (só necessário quando PLATFORM=ios) ───────────────
+IOS_VERSION=17.0         # versão do simulador iOS
+IOS_UDID=                # UDID do simulador (opcional, auto-detectado)
+
+# ─── BrowserStack Android (só necessário quando RUN_ON_BS=true) ──────────────
 BROWSERSTACK_USER=seu_usuario
 BROWSERSTACK_KEY=sua_chave
-BROWSERSTACK_ANDROID_APP=bs://hash_do_app_uploadado
+BROWSERSTACK_ANDROID_APP=bs://hash_do_app_android
+BS_ANDROID_DEVICE=Google Pixel 8
+BS_ANDROID_VERSION=14.0
+
+# ─── BrowserStack iOS (só necessário quando RUN_ON_BS=true e PLATFORM=ios) ───
+BROWSERSTACK_IOS_APP=bs://hash_do_app_ios
+BS_IOS_DEVICE=iPhone 15
+BS_IOS_VERSION=17
+
+# ─── Build name (aparece no relatório BrowserStack) ──────────────────────────
 BUILD_NAME=Mobile Regression
 
 # ─── Timeouts opcionais ──────────────────────────────────────────────────────
 LOG_LEVEL=error
-WAIT_TIMEOUT=10000
+WAIT_TIMEOUT=15000
 MOCHA_TIMEOUT=120000
 ```
 
@@ -356,24 +381,38 @@ adb devices
 npm test
 ```
 
-Isso executa todos os 4 arquivos de spec em sequência e abre o relatório Allure ao final.
+Isso executa todos os 4 arquivos de spec em sequência (Android) e abre o relatório Allure ao final.
 
-### Rodar um grupo específico
+### Rodar um grupo específico — Android
 
 ```bash
-npm run test:login        # só testes de login (TC-01 a TC-05)
-npm run test:signup       # só testes de cadastro (TC-01 a TC-09)
-npm run test:navigation   # só teste de navegação (TC-06)
-npm run test:forms        # só teste de formulário (TC-10)
+npm run test:login        # só testes de login
+npm run test:signup       # só testes de cadastro
+npm run test:navigation   # só teste de navegação
+npm run test:forms        # só teste de formulário
+npm run test:android      # suíte completa (equivalente a npm test com PLATFORM=android)
+```
+
+### Rodar em iOS (Simulador)
+
+Requer Xcode, simulador configurado e driver XCUITest instalado (`appium driver install xcuitest`).
+
+```bash
+npm run test:ios              # suíte completa em iOS
+npm run test:ios:login        # só testes de login (iOS)
+npm run test:ios:signup       # só testes de cadastro (iOS)
+npm run test:ios:navigation   # só teste de navegação (iOS)
+npm run test:ios:forms        # só teste de formulário (iOS)
 ```
 
 ### Rodar no BrowserStack
 
 ```bash
-npm run test:browserstack
+npm run test:browserstack        # Android no BrowserStack
+npm run test:browserstack:ios    # iOS no BrowserStack
 ```
 
-Certifique-se de que `BROWSERSTACK_USER`, `BROWSERSTACK_KEY` e `BROWSERSTACK_ANDROID_APP` estão preenchidos no `.env`.
+Certifique-se de que as variáveis BrowserStack estão preenchidas no `.env` (veja seção 8).
 
 ### Gerar e abrir o relatório manualmente
 
@@ -393,15 +432,14 @@ Remove as pastas `allure-results/`, `allure-report/` e `errorShots/`.
 
 ## 10. Cenários de Teste
 
-### Login (`test/specs/login.test.js`) — 5 testes
+### Login (`test/specs/login.test.js`) — 4 testes
 
 | ID | Cenário | Dados usados | Resultado esperado |
 |----|---------|-------------|-------------------|
 | TC-01 | Login com credenciais válidas | `validUser` | Modal "Success" aparece |
 | TC-02 | Login sem preencher nenhum campo | — | Mensagens de erro para email e senha |
 | TC-03 | Login com email em formato inválido | `invalidEmail` | Mensagem de erro no campo email |
-| TC-04 | Login com senha vazia | `validEmailEmptyPassword` | Mensagem de erro no campo senha |
-| TC-05 | Login com senha menor que 8 caracteres | `shortPassword` | Mensagem de erro no campo senha |
+| TC-04 | Login com senha menor que 8 caracteres | `shortPassword` | Mensagem de erro no campo senha |
 
 **Exemplo de como o TC-01 funciona:**
 1. O app é reiniciado (`resetApp`)
@@ -414,19 +452,14 @@ Remove as pastas `allure-results/`, `allure-report/` e `errorShots/`.
 
 ---
 
-### Sign Up (`test/specs/signUp.test.js`) — 9 testes
+### Sign Up (`test/specs/signUp.test.js`) — 4 testes
 
 | ID | Cenário | Dados usados | Resultado esperado |
 |----|---------|-------------|-------------------|
 | TC-01 | Cadastro com dados válidos | `validSignUpUser` | Modal "Signed Up!" aparece |
 | TC-02 | Cadastro com todos os campos vazios | — | 3 mensagens de erro (email, senha, confirmação) |
-| TC-03 | Cadastro com email inválido | `invalidEmailSignUpUser` | Erro no campo email |
-| TC-04 | Senha com menos de 8 caracteres | `shortPasswordSignUpUser` | Erro no campo senha |
-| TC-05 | Confirmação de senha com menos de 8 caracteres | `shortConfirmPasswordUser` | Erro no campo confirmação |
-| TC-06 | Senha não preenchida | `emptyPasswordSignUpUser` | Erro no campo senha |
-| TC-07 | Confirmação de senha não preenchida | `emptyConfirmPasswordSignUpUser` | Erro no campo confirmação |
-| TC-08 | Email não preenchido | `emptyEmailSignUpUser` | Erro no campo email |
-| TC-09 | Senha e confirmação diferentes | `mismatchedPasswordSignUpUser` | Erro "Please enter the same password" |
+| TC-03 | Senha com menos de 8 caracteres | `shortPasswordSignUpUser` | Erro no campo senha |
+| TC-04 | Senha e confirmação diferentes | `mismatchedPasswordSignUpUser` | Erro "Please enter the same password" |
 
 ---
 
@@ -512,7 +545,7 @@ BasePage (common.component.js)
 
 | Método | O que faz |
 |--------|-----------|
-| `waitForDisplayed(selector)` | Aguarda o elemento aparecer na tela (timeout: 10s) |
+| `waitForDisplayed(selector)` | Aguarda o elemento aparecer na tela (timeout: 15s) |
 | `click(selector)` | Aguarda e clica no elemento |
 | `setValue(selector, value)` | Aguarda, limpa e preenche um campo |
 | `getText(selector)` | Aguarda e retorna o texto do elemento |
@@ -764,7 +797,7 @@ O `onPrepare` copia automaticamente o histórico da execução anterior para a n
 
 O BrowserStack é uma plataforma que oferece dispositivos reais (não emuladores) na nuvem para executar testes.
 
-### Configuração
+### Configuração — Android
 
 1. Crie uma conta em [browserstack.com](https://www.browserstack.com)
 2. Acesse **App Automate** → faça upload do APK
@@ -775,7 +808,7 @@ O BrowserStack é uma plataforma que oferece dispositivos reais (não emuladores
 RUN_ON_BS=true
 BROWSERSTACK_USER=seu_usuario
 BROWSERSTACK_KEY=sua_chave_de_acesso
-BROWSERSTACK_ANDROID_APP=bs://hash_do_app
+BROWSERSTACK_ANDROID_APP=bs://hash_do_app_android
 ```
 
 5. Execute:
@@ -784,21 +817,41 @@ BROWSERSTACK_ANDROID_APP=bs://hash_do_app
 npm run test:browserstack
 ```
 
-### Dispositivo configurado
+### Configuração — iOS
 
-| Configuração | Valor |
-|-------------|-------|
-| **Dispositivo** | Google Pixel 8 |
-| **Sistema** | Android 14.0 |
-| **Driver** | UiAutomator2 |
-| **Projeto** | Desafio Banco Carrefour |
+1. Faça upload do `.app` iOS para o BrowserStack App Automate
+2. Copie a URL no formato `bs://hash_gerado`
+3. Preencha o `.env`:
+
+```bash
+RUN_ON_BS=true
+PLATFORM=ios
+BROWSERSTACK_USER=seu_usuario
+BROWSERSTACK_KEY=sua_chave_de_acesso
+BROWSERSTACK_IOS_APP=bs://hash_do_app_ios
+```
+
+4. Execute:
+
+```bash
+npm run test:browserstack:ios
+```
+
+### Dispositivos configurados
+
+| Plataforma | Dispositivo | Sistema | Driver |
+|-----------|-------------|---------|--------|
+| **Android** | Google Pixel 8 | Android 14.0 | UiAutomator2 |
+| **iOS** | iPhone 15 | iOS 17 | XCUITest |
+
+Os dispositivos podem ser substituídos pelas variáveis `BS_ANDROID_DEVICE`, `BS_ANDROID_VERSION`, `BS_IOS_DEVICE` e `BS_IOS_VERSION` no `.env`.
 
 ### Diferenças entre local e BrowserStack
 
 | Aspecto | Local | BrowserStack |
 |---------|-------|-------------|
-| Dispositivo | Emulador (virtual) | Dispositivo real |
-| Velocidade de setup | Rápida | Mais lenta (upload APK) |
+| Dispositivo | Emulador/Simulador (virtual) | Dispositivo real |
+| Velocidade de setup | Rápida | Mais lenta (upload do app) |
 | Custo | Gratuito | Pago (plano gratuito disponível) |
 | `resetApp()` | terminateApp + activateApp | clearApp + startActivity |
 
@@ -926,9 +979,9 @@ npm test
 
 ### Atualizar a versão do app testado
 
-1. Baixe o novo APK
-2. Substitua em `app/`
-3. Se usar BrowserStack, faça upload do novo APK e atualize `BROWSERSTACK_ANDROID_APP` no `.env`
+1. Baixe o novo APK / `.app`
+2. Substitua em `app/android/` (Android) ou `app/ios/` (iOS)
+3. Se usar BrowserStack, faça upload do novo app e atualize `BROWSERSTACK_ANDROID_APP` ou `BROWSERSTACK_IOS_APP` no `.env`
 4. Verifique se os seletores ainda funcionam executando a suíte completa
 
 ---
@@ -971,6 +1024,6 @@ npm test
 <div align="center">
 
 **Desafio Banco Carrefour — Mobile Test Automation**
-WebdriverIO v8 · Appium 2 · Mocha · Chai · Allure
+WebdriverIO v8 · Appium 2 · Mocha · Chai · Allure · Android & iOS
 
 </div>

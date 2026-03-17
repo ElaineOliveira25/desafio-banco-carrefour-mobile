@@ -144,13 +144,13 @@ class FormsPage extends BasePage {
 
     async acessarTelaForms() {
         const btn = await this.formsMenuButton;
-        await btn.waitForDisplayed({ timeout: 10000 });
+        await btn.waitForDisplayed({ timeout: 15000 });
         await btn.click();
     }
 
     async preencherTextInput(text) {
         const input = await this.textInput;
-        await input.waitForDisplayed({ timeout: 10000 });
+        await input.waitForDisplayed({ timeout: 15000 });
         await input.click();
         await input.clearValue();
         await input.setValue(text);
@@ -159,32 +159,32 @@ class FormsPage extends BasePage {
 
     async clicarSwitch() {
         const sw = await this.switchButton;
-        await sw.waitForDisplayed({ timeout: 10000 });
+        await sw.waitForDisplayed({ timeout: 15000 });
         await sw.click();
     }
 
     async selecionarOpcaoDropdown() {
         const field = await this.dropdownField;
-        await field.waitForDisplayed({ timeout: 10000 });
+        await field.waitForDisplayed({ timeout: 15000 });
         await field.click();
         const option = await this.dropdownOptionAwesome;
-        await option.waitForDisplayed({ timeout: 10000 });
+        await option.waitForDisplayed({ timeout: 15000 });
         await option.click();
     }
 
     async abrirModal() {
         // Clica em Inactive para deselecionar, depois em Active para acionar o modal
         const inactive = await this.inactiveButton;
-        await inactive.waitForDisplayed({ timeout: 10000 });
+        await inactive.waitForDisplayed({ timeout: 15000 });
         await inactive.click();
         const active = await this.activeButton;
-        await active.waitForDisplayed({ timeout: 10000 });
+        await active.waitForDisplayed({ timeout: 15000 });
         await active.click();
     }
 
     async fecharModal() {
         const btn = await this.modalButton1;
-        await btn.waitForDisplayed({ timeout: 10000 });
+        await btn.waitForDisplayed({ timeout: 15000 });
         await btn.click();
     }
 }

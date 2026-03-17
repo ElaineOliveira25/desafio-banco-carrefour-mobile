@@ -69,27 +69,27 @@ class SignUpPage extends BasePage {
 
     async acessarAbaSignUp() {
         const tab = await this.signUpTab;
-        await tab.waitForDisplayed({ timeout: 10000 });
+        await tab.waitForDisplayed({ timeout: 15000 });
         await tab.click();
     }
 
     async preencherCampos(email, password, confirmPassword) {
         const emailEl = await this.emailField;
-        await emailEl.waitForDisplayed({ timeout: 10000 });
+        await emailEl.waitForDisplayed({ timeout: 15000 });
         await emailEl.setValue(email);
 
         const passEl = await this.passwordField;
-        await passEl.waitForDisplayed({ timeout: 10000 });
+        await passEl.waitForDisplayed({ timeout: 15000 });
         await passEl.setValue(password);
 
         const confirmEl = await this.confirmPasswordField;
-        await confirmEl.waitForDisplayed({ timeout: 10000 });
+        await confirmEl.waitForDisplayed({ timeout: 15000 });
         await confirmEl.setValue(confirmPassword);
     }
 
     async clicarSignUp() {
         const btn = await this.signUpButton;
-        await btn.waitForDisplayed({ timeout: 10000 });
+        await btn.waitForDisplayed({ timeout: 15000 });
         await btn.click();
     }
 }

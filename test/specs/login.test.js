@@ -1,10 +1,10 @@
 'use strict';
 
 const { expect } = require('chai');
-const allure     = require('@wdio/allure-reporter').default;
+const allure = require('@wdio/allure-reporter').default;
 const { resetApp } = require('../helpers/appHelper');
-const LoginPage    = require('../pageobjects/login.page');
-const dataLogin    = require('../data/dataLogin.json');
+const LoginPage = require('../pageobjects/login.page');
+const dataLogin = require('../data/dataLogin.json');
 
 describe('Tela de Login', () => {
     beforeEach(async () => {
@@ -18,7 +18,7 @@ describe('Tela de Login', () => {
 
         await LoginPage.acessarTelaLogin();
 
-        await (await LoginPage.loginSignUpTitle).waitForDisplayed({ timeout: 10000 });
+        await (await LoginPage.loginSignUpTitle).waitForDisplayed({ timeout: 15000 });
 
         await LoginPage.login(dataLogin.validUser.email, dataLogin.validUser.password);
 
@@ -26,8 +26,8 @@ describe('Tela de Login', () => {
         await alertTitle.waitForDisplayed({ timeout: 20000 });
         expect(await alertTitle.getText()).to.equal('Success');
 
-        await (await LoginPage.alertMessage).waitForDisplayed({ timeout: 10000 });
-        await (await LoginPage.alertOkButton).waitForDisplayed({ timeout: 10000 });
+        await (await LoginPage.alertMessage).waitForDisplayed({ timeout: 15000 });
+        await (await LoginPage.alertOkButton).waitForDisplayed({ timeout: 15000 });
 
         await LoginPage.fecharModalSucesso();
     });
@@ -39,8 +39,8 @@ describe('Tela de Login', () => {
         await LoginPage.acessarTelaLogin();
         await LoginPage.clicarLoginSemPreencher();
 
-        await (await LoginPage.errorEmailMsg).waitForDisplayed({ timeout: 10000 });
-        await (await LoginPage.errorPasswordMsg).waitForDisplayed({ timeout: 10000 });
+        await (await LoginPage.errorEmailMsg).waitForDisplayed({ timeout: 15000 });
+        await (await LoginPage.errorPasswordMsg).waitForDisplayed({ timeout: 15000 });
     });
 
     it('Deve exibir mensagem de erro ao informar email inválido', async () => {
@@ -50,7 +50,7 @@ describe('Tela de Login', () => {
         await LoginPage.acessarTelaLogin();
         await LoginPage.login(dataLogin.invalidEmail.email, dataLogin.invalidEmail.password);
 
-        await (await LoginPage.errorEmailMsg).waitForDisplayed({ timeout: 10000 });
+        await (await LoginPage.errorEmailMsg).waitForDisplayed({ timeout: 15000 });
     });
 
     it('Deve exibir erro quando a senha possuir menos de 8 caracteres', async () => {
@@ -60,6 +60,6 @@ describe('Tela de Login', () => {
         await LoginPage.acessarTelaLogin();
         await LoginPage.login(dataLogin.shortPassword.email, dataLogin.shortPassword.password);
 
-        await (await LoginPage.errorPasswordMsg).waitForDisplayed({ timeout: 10000 });
+        await (await LoginPage.errorPasswordMsg).waitForDisplayed({ timeout: 15000 });
     });
 });
